@@ -4,21 +4,15 @@ use itertools::Itertools;
 use reqwest::blocking::Client;
 use url::Url;
 
-use crate::plex::models::{MediaRoot, MovieMetadata, SearchRoot};
+use crate::{
+    core::models::TmdbId,
+    plex::models::{MediaRoot, MovieMetadata, SearchRoot},
+};
 
 #[derive(Debug)]
 pub struct Server {
     pub url: Url,
     client: Client, // TODO: Make this a more flexible way of calling a server.
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct TmdbId(String);
-
-impl From<String> for TmdbId {
-    fn from(id: String) -> Self {
-        TmdbId(id)
-    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -45,7 +39,7 @@ impl Server {
 
     pub fn get_movie_by_tmdb_id(
         &self,
-        tmdb_id: TmdbId,
+        tmdb_id: &TmdbId,
     ) -> Result<Option<MovieMetadata>, Box<dyn Error>> {
         let movie_id = self
             .get_movie_id(&tmdb_id)
